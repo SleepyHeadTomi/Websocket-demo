@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  nginx:
+    container_name: demo_nginx_web
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    restart: always
+    ports:
+      - "80:80"  # Denna port exponeras för din värddator
+    depends_on:
+      - server
+
+  server:
+    container_name: demo_server
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    restart: always
+    expose:
+      - "8000"
+    # ports:
+    #   - "8000:80"  # Port exponerad för värddatorn men inte nödvändig för intern kommunikation

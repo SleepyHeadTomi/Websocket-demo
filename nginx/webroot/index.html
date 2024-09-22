@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Case Generator</title>
+</head>
+<body>
+    <h1>GUI Test Case Generator</h1>
+     <form id="testForm">
+            <label for="message">Message:</label>
+            <input type="text" id="message" name="message" required>
+            <button type="submit">Send</button>
+     </form>
+
+     <div id="responseContainer"></div>
+
+    <script>
+        const socket = new WebSocket("ws://localhost:80/ws/");
+        const form = document.getElementById("testForm");
+
+        const contactServer = (data) => {
+            socket.send(data);
+        }
+
+        socket.addEventListener("message", function (event) {
+            const responseElement = document.createElement("div");
+            const container = document.getElementById("responseContainer");
+            container.innerHTML = "";
+            responseElement.textContent = event.data;
+
+            container.appendChild(responseElement);
+        });
+
+        socket.addEventListener("error", function (event) {
+            console.error("WebSocket error: ", event);
+        });
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const data = document.getElementById("message").value;
+
+            if (socket.readyState === WebSocket.OPEN) {
+                contactServer(data);
+            }
+            else {
+                console.error("WebSocket is not open. ReadyState " + socket.readyState);
+            }
+
+        });
+    </script>
+</body>
+</html>
